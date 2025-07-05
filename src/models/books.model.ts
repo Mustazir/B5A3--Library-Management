@@ -34,26 +34,26 @@ const bookSchema = new Schema<IBook>({
       ],
       message: "{VALUE} is not a valid genre",
     },
-    isbn: {
-        type: String,
-        required: true,
-        unique: true,
-        
-    },
-    description: {
-        type: String,
-        default: "",
-    },
-    copies: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    available: {
-      type: Boolean,
-      default: true,
-    },
-
+  },
+  isbn: {
+    type: String,
+    required: true,
+    unique: true,
+    
+    minlength: [4, "ISBN must be at least 4 characters long"],
+  },
+  description: {
+    type: String,
+    default: "",
+  },
+  copies: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  available: {
+    type: Boolean,
+    default: true,
   },
 });
 
