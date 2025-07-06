@@ -10,51 +10,57 @@ available (boolean) — Defaults to true. Indicates if the book is currently ava
 import { model, Schema } from "mongoose";
 import { IBook } from "../interface/book.interface";
 
-const bookSchema = new Schema<IBook>({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  author: {
-    type: String,
-    required: true,
-  },
-  genre: {
-    type: String,
-    required: true,
-    enum: {
-      values: [
-        "FICTION",
-        "NON_FICTION",
-        "SCIENCE",
-        "HISTORY",
-        "BIOGRAPHY",
-        "FANTASY",
-      ],
-      message: "{VALUE} is not a valid genre",
+const bookSchema = new Schema<IBook>(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    author: {
+      type: String,
+      required: true,
+    },
+    genre: {
+      type: String,
+      required: true,
+      enum: {
+        values: [
+          "FICTION",
+          "NON_FICTION",
+          "SCIENCE",
+          "HISTORY",
+          "BIOGRAPHY",
+          "FANTASY",
+        ],
+        message: "{VALUE} is not a valid genre",
+      },
+    },
+    isbn: {
+      type: String,
+      required: true,
+      unique: true,
+
+      minlength: [4, "ISBN must be at least 4 characters long"],
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+    copies: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    available: {
+      type: Boolean,
+      default: true,
     },
   },
-  isbn: {
-    type: String,
-    required: true,
-    unique: true,
-    
-    minlength: [4, "ISBN must be at least 4 characters long"],
-  },
-  description: {
-    type: String,
-    default: "",
-  },
-  copies: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  available: {
-    type: Boolean,
-    default: true,
-  },
-});
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
 export const Book = model<IBook>("Book", bookSchema);

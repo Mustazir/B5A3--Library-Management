@@ -1,5 +1,6 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import { bookRoutes } from "../controller/book.controller";
+import { borrowRoutes } from "../controller/borrow.controller";
 
 
 
@@ -11,6 +12,9 @@ app.use(express.json()); //to parse json data from request body
 
 app.use("/books",bookRoutes); // /notes is the rote then redirect to noteRoutes folder
 // app.use("/users", userRoutes); // /users is the rote then redirect to noteRoutes folder
+
+
+app.use("/borrow",borrowRoutes );
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Note App!");
