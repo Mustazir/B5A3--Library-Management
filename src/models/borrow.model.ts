@@ -3,10 +3,7 @@ import { IBorrow } from "../interface/borrow.interface";
 
 
 const borrowSchema =new Schema<IBorrow>({
-    book:{
-        type: String,
-        required: true,
-    },
+
     quantity: {
         type: Number,
         required: true,
@@ -16,7 +13,11 @@ const borrowSchema =new Schema<IBorrow>({
         type: Date,
         required: true,
     },
-    
+    books: {
+        type: Schema.Types.ObjectId,
+        ref: "Book", // Assuming you have a Book model
+        required: true,
+    }
 
 },{
     timestamps: true,

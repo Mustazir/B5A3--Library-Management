@@ -4,7 +4,7 @@ import { Book } from "./../models/books.model";
 export const bookRoutes = express.Router();
 
 bookRoutes.post(
-  "/books",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
