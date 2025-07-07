@@ -38,7 +38,7 @@ borrowRoutes.get(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Fetch all borrow entries
-      const borrows = await Borrow.find();
+      const borrows = await Borrow.find().populate("books")
 
       res.status(200).json({
         success: true,
