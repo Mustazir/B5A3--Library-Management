@@ -1,52 +1,78 @@
 import express, { NextFunction, Request, Response } from "express";
 import { Borrow } from "../models/borrow.model";
+import { Book } from "../models/books.model";
 
 export const borrowRoutes = express.Router();
 
-borrowRoutes.get(
-  "/a",
-  async (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
-    console.log("Borrow route hit");
-    res.status(200).json({
-      message: "Borrow route is working",
-    });
-  }
-);
-borrowRoutes.post("/",async (req:Request,res:Response,next:NextFunction)=>{
+
+borrowRoutes.post("/", async (req, res, next) => {
   try {
     const body = req.body;
-    // Assuming you have a Borrow model to create a borrow entry
-    const borrow = await Borrow.create(body);
+    
+    // Create a new Borrow instance but don't save yet
+    const borrow = new Borrow(body);
+
+    // Check availability & update book copies
+    await borrow.checkAvailibility();
+
+    // Save borrow only if checkAvailibility passes
+    await borrow.save();
 
     res.status(201).json({
       success: true,
       message: "Borrow created successfully",
-      borrow
+      data: borrow,
     });
   } catch (error) {
-    next(error); // 🔄 Passes error to your global error handler
+    next(error);
   }
-})
+});
 
 
-borrowRoutes.get(
-  "/",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // Fetch all borrow entries
-      const borrows = await Borrow.find().populate("books")
+borrowRoutes.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const summary = await Borrow.aggregate([
+      {
+        $group: {
+          _id: "$book",
+          totalQuantity: { $sum: "$quantity" },
+        },
+      },
+      {
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "_id",
+          as: "bookInfo",
+        },
+      },
+      {
+        $unwind: "$bookInfo",
+      },
+      {
+        $project: {
+          _id: 0,
+          book: {
+            title: "$bookInfo.title",
+            isbn: "$bookInfo.isbn",
+          },
+          totalQuantity: 1,
+        },
+      },
+    ]);
 
-      res.status(200).json({
-        success: true,
-        message: "Borrows fetched successfully",
-        data: borrows, // use 'data' not 'books'
-      });
-    } catch (error) {
-      next(error);
-    }
+    const formattedSummary = summary.map(item => ({
+      book: item.book,
+      totalQuantity: item.totalQuantity,
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: "Borrowed books summary retrieved successfully",
+      data: formattedSummary,
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
+

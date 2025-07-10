@@ -1,7 +1,13 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 export interface IBorrow {
-  books: Types.ObjectId;
+  book: Types.ObjectId;
   quantity: number;
   dueDate: Date;
 }
+
+export interface IBorrowMethods{
+  checkAvailibility(): Promise<any>
+}
+
+export interface IBorrowModel extends Model<IBorrow,{},IBorrowMethods>{}

@@ -40,7 +40,6 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
       unique: true,
-
       minlength: [4, "ISBN must be at least 4 characters long"],
     },
     description: {
@@ -50,7 +49,7 @@ const bookSchema = new Schema<IBook>(
     copies: {
       type: Number,
       required: true,
-      min: [1,"Copies must be a positive number"],
+      min: [0,"Copies must be a positive number"],
     },
     available: {
       type: Boolean,
@@ -62,5 +61,15 @@ const bookSchema = new Schema<IBook>(
     versionKey: false,
   }
 );
+
+bookSchema.pre("save", async function(next){
+  const book = this as IBook;
+  book.available = book.copies>0 ;
+  next();
+})
+
+bookSchema.post("save", function (doc) {
+  console.log(`Book saved: ${doc.title}`);
+});
 
 export const Book = model<IBook>("Book", bookSchema);
