@@ -13,8 +13,8 @@ const app: Application = express();
 app.use(express.json());
 
 // Routes
-app.use("/books", bookRoutes);
-app.use("/borrow", borrowRoutes);
+app.use("/api/books", bookRoutes);
+app.use("/api/borrow", borrowRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Note App!");
@@ -29,7 +29,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Global Error Handler Middleware — For errors thrown/passed with next(err)
-const errorHandler: ErrorRequestHandler = (error :any, req:Request, res:Response, next:NextFunction): void => {
+const errorHandler: ErrorRequestHandler = (
+  error: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   console.error(error); // optional logging
 
   if (error.name === "ValidationError") {
@@ -66,7 +71,6 @@ const errorHandler: ErrorRequestHandler = (error :any, req:Request, res:Response
     error: error,
   });
 };
-
 
 app.use(errorHandler);
 
