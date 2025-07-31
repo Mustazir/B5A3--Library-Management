@@ -7,8 +7,10 @@ import express, {
 } from "express";
 import { bookRoutes } from "../controller/book.controller";
 import { borrowRoutes } from "../controller/borrow.controller";
+import cors from "cors";
 
 const app: Application = express();
+app.use(cors())
 
 app.use(express.json());
 
